@@ -11,12 +11,11 @@ const CAPTCHA = '181445682966897848665963472661939865313976877194312684993521259
 
 function sumCaptcha(item, distance) {
     const itemArray = item.split('').map(item => +item);
-    return itemArray.reduce((acc, digit, index) => {
-        const otherIndex = (index + distance) % itemArray.length;
-        if (digit === itemArray[otherIndex]) {
-            return acc + digit;
-        }
-        return acc;
+    const filteredSameDigits = itemArray.filter((digit, index) => {
+        return digit === itemArray[(index + distance) % itemArray.length];
+    });
+    return filteredSameDigits.reduce((acc, digit) => {
+        return acc + digit;
     }, 0);
 }
 
