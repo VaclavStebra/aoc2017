@@ -32,8 +32,8 @@ const SPREADSHEET = `409	194	207	470	178	454	235	333	511	103	474	293	525	372	408
 
 function checksum(input) {
     const arrayInput = parseInput(input);
-    return arrayInput.reduce(row => {
-        sum += Math.max(...row) - Math.min(...row);
+    return arrayInput.reduce((acc, row) => {
+        return acc + Math.max(...row) - Math.min(...row);
     }, 0);
 }
 
