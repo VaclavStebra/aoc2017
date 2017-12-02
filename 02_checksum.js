@@ -39,26 +39,16 @@ function checksum(input) {
 
 function checksum2(input) {
     const arrayInput = parseInput(input);
-    let sum = 0;
-    arrayInput.forEach(row => {
-        let first = 0;
-        let second = 0;
+    return arrayInput.reduce((acc, row) => {
         row.sort((a, b) => b - a);
         for (let i = 0; i < row.length; i++) {
             for (let j = i + 1; j < row.length; j++) {
                 if (row[i] % row[j] === 0) {
-                    first = row[i];
-                    second = row[j];
-                    break;
+                    return acc + row[i] / row[j];
                 }
             }
-            if (first  !== 0 && second !== 0) {
-                break;
-            }
         }
-        sum += first / second;
-    })
-    return sum;
+    }, 0);
 }
 
 function parseInput(input) {
