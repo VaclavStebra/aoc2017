@@ -27,48 +27,43 @@ function getCoords(number) {
     while (number > width * width) {
         width += 2;
     }
-    let x = (width - 1) / 2;
-    let y = -((width - 1) / 2);
+    const cornerDifference = width - 1;
+    
+    let candidate = (width * width) - cornerDifference;
+    let x = -(cornerDifference / 2);
+    let y = -x;
 
-    let candidate = width * width;
     // bottom row
-    if (number >= candidate - (width - 1)) {
-        while (candidate !== number) {
-            x -= 1;
-            candidate--;
-        }
-        return {x, y};
+    if (number >= candidate) {
+        return findNumber(number, candidate, x, y, 1, 0);
     }
-    candidate -= (width - 1);
+    candidate -= cornerDifference;
     // left column
-    if (number >= candidate - (width - 1)) {
-        x = -((width - 1) / 2);
-        while (candidate !== number) {
-            y += 1;
-            candidate--;
-        }
-        return {x, y};
+    if (number >= candidate) {        
+        y = cornerDifference / 2;
+        return findNumber(number, candidate, x, y, 0, -1);
     }
-    candidate -= (width - 1);
+    candidate -= cornerDifference;
     // top row
-    if (number >= candidate - (width - 1)) {
-        y = (width - 1) / 2;
-        x = -((width - 1) / 2);
-        while (candidate !== number) {
-            x += 1;
-            candidate--;
-        }
-        return {x, y};
+    if (number >= candidate) {
+        x = cornerDifference / 2;        
+        y = x;
+        return findNumber(number, candidate, x, y, -1, 0);
     }
-    candidate -= (width - 1);
+    candidate -= (cornerDifference - 1);
     // right column
-    x = (width - 1) / 2;
-    y = (width - 1) / 2;
-    while (candidate !== number) {
-        y -= 1;
-        candidate--;
-    }
+    x = cornerDifference / 2;
+    y = -(cornerDifference / 2 - 1);
+    return findNumber(number, candidate, x, y, 0, 1);
+}
 
+function findNumber(number, candidate, x, y, deltaX, deltaY) {
+    let i = candidate;
+    while (i !== number) {
+        x += deltaX;
+        y += deltaY;
+        i++;
+    }
     return {x, y};
 }
 
@@ -102,6 +97,7 @@ function test02(input, output) {
 test01();
 test02(INPUT_02, EXPECTED_OUTPUT_02);
 
+// 371
 const result = p01(INPUT);
 const result2 = p02(INPUT);
 console.log(result, result2);
