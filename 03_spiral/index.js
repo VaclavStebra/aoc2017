@@ -23,19 +23,19 @@ function p01(input) {
 }
 
 function getCoords(number) {
-    let width = 1;
-    while (number > width * width) {
-        width += 2;
+    if (number === 1) {
+        return {x: 0, y: 0};
     }
-    
-    let candidate = width * width;
-    const maxCoord = (width - 1) / 2;
 
+    const width = getWidth(number);    
+    const maxCoord = (width - 1) / 2;
+    
     const xDeltas = [1, 0, -1, 0];
     const yDeltas = [0, -1, 0, 1];
     const xCandidates = [-maxCoord, -maxCoord, maxCoord, maxCoord];
     const yCandidates = [-maxCoord, maxCoord, maxCoord, -maxCoord];
-
+    
+    let candidate = width * width;
     let result = -1;
 
     while (result === -1) {
@@ -49,6 +49,11 @@ function getCoords(number) {
     }
 
     return result;
+}
+
+function getWidth(number) {
+    const sqrtFromNumber = Math.floor(Math.sqrt(number));
+    return sqrtFromNumber % 2 === 0 ? sqrtFromNumber + 1 : sqrtFromNumber + 2;
 }
 
 function findNumber(number, candidate, x, y, deltaX, deltaY) {
