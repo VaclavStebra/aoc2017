@@ -19,7 +19,7 @@ const portCoords = {
 
 function p01(input) {
     const coords = getCoords(input);
-    return manhatanDistance(portCoords, coords);
+    return manhattanDistance(portCoords, coords);
 }
 
 function getCoords(number) {
@@ -27,37 +27,34 @@ function getCoords(number) {
     while (number > width * width) {
         width += 2;
     }
-    const cornerDifference = width - 1;
     
-    let candidate = (width * width) - cornerDifference;
-    let x = -(cornerDifference / 2);
-    let y = -x;
+    let candidate = width * width;
+    const maxCoord = (width - 1) / 2;
 
-    // bottom row
-    if (number >= candidate) {
-        return findNumber(number, candidate, x, y, 1, 0);
+    const xDeltas = [1, 0, -1, 0];
+    const yDeltas = [0, -1, 0, 1];
+    const xCandidates = [-maxCoord, -maxCoord, maxCoord, maxCoord];
+    const yCandidates = [-maxCoord, maxCoord, maxCoord, -maxCoord];
+
+    let result = -1;
+
+    while (result === -1) {
+        let x = xCandidates.shift();
+        let y = yCandidates.shift();
+        let deltaX = xDeltas.shift();
+        let deltaY = yDeltas.shift();
+        candidate -= (width - 1);
+
+        result = findNumber(number, candidate, x, y, deltaX, deltaY);
     }
-    candidate -= cornerDifference;
-    // left column
-    if (number >= candidate) {        
-        y = cornerDifference / 2;
-        return findNumber(number, candidate, x, y, 0, -1);
-    }
-    candidate -= cornerDifference;
-    // top row
-    if (number >= candidate) {
-        x = cornerDifference / 2;        
-        y = x;
-        return findNumber(number, candidate, x, y, -1, 0);
-    }
-    candidate -= (cornerDifference - 1);
-    // right column
-    x = cornerDifference / 2;
-    y = -(cornerDifference / 2 - 1);
-    return findNumber(number, candidate, x, y, 0, 1);
+
+    return result;
 }
 
 function findNumber(number, candidate, x, y, deltaX, deltaY) {
+    if (number < candidate) {
+        return -1;
+    }
     let i = candidate;
     while (i !== number) {
         x += deltaX;
@@ -67,14 +64,14 @@ function findNumber(number, candidate, x, y, deltaX, deltaY) {
     return {x, y};
 }
 
-function manhatanDistance(source, target) {
+function manhattanDistance(source, target) {
     return Math.abs(source.x - target.x) + Math.abs(source.y - target.y);
 }
 
 function testManhatanDistance() {
-    assert.equal(manhatanDistance({x: 0, y: 0}, {x: 0, y: 0}), 0);
-    assert.equal(manhatanDistance({x: 2, y: -1}, {x: 0, y: 0}), 3);
-    assert.equal(manhatanDistance({x: -1, y: 1}, {x: 2, y: 2}), 4);
+    assert.equal(manhattanDistance({x: 0, y: 0}, {x: 0, y: 0}), 0);
+    assert.equal(manhattanDistance({x: 2, y: -1}, {x: 0, y: 0}), 3);
+    assert.equal(manhattanDistance({x: -1, y: 1}, {x: 2, y: 2}), 4);
 }
 
 function p02(input) {
