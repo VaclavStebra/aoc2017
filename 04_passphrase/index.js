@@ -31,7 +31,34 @@ function isValid(passphrase) {
 }
 
 function isValid02(passphrase) {
-    return false;
+    const words = passphrase.split(' ');
+    let isValid = true;
+    let uniqueWords = [];
+
+    words.forEach(word => {
+        const letters = word.split('').sort();
+        let isUnique = true;
+        uniqueWords.forEach(uniqueWord => {
+            if (arrayEquals(uniqueWord, letters)) {
+                isUnique = false;
+            }
+        });
+        if (isUnique) {
+            uniqueWords.push(letters)
+        } else {
+            isValid = false;
+        }
+    });
+    
+    return isValid;
+}
+
+function arrayEquals(array, otherArray) {
+    let firstArray = array.slice().sort();
+    let secondArray = otherArray.slice().sort();
+    return firstArray.length === secondArray.length && firstArray.reduce((acc, currentValue, currentIndex) => {
+        return acc && currentValue === secondArray[currentIndex];
+    }, true);
 }
 
 function test(testInput, expectedTestOutput, input, output, phraseCheck) {
@@ -53,7 +80,7 @@ function test02(input, output) {
 }
 
 test(TEST_INPUT_01, EXPECTED_OUTPUT_01, INPUT_01, 2, isValid);
-//test(TEST_INPUT_02, EXPECTED_OUTPUT_02, INPUT_02, 3, isValid02);
+test(TEST_INPUT_02, EXPECTED_OUTPUT_02, INPUT_02, 3, isValid02);
 
 const result = countValidPhrases(INPUT);
 const result2 = countValidPhrases(INPUT, isValid02);
