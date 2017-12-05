@@ -70,15 +70,6 @@ function test(testInput, expectedTestOutput, input, output, phraseCheck) {
     assert.equal(numValid, output);
 }
 
-function test02(input, output) {
-    TEST_INPUT_02.forEach((input, index) => {
-        const answer = isValid02(input);
-        assert.equal(answer, EXPECTED_OUTPUT_02[index]);
-    });
-    const numValid = countValidPhrases(INPUT_02, isValid02);
-    assert.equal(numValid, 3);
-}
-
 test(TEST_INPUT_01, EXPECTED_OUTPUT_01, INPUT_01, 2, isValid);
 test(TEST_INPUT_02, EXPECTED_OUTPUT_02, INPUT_02, 3, isValid02);
 
