@@ -6,20 +6,22 @@ const assert = require('assert');
 const INPUT_01 = `aa bb cc dd ee
 aa bb cc dd aa
 aa bb cc dd aaa`;
-const TEST_INPUT_01 = ['aa bb cc dd ee', 'aa bb cc dd aa', 'aa bb cc dd aaa'];
-const INPUT_02 = [];
+const TEST_INPUT_01 = INPUT_01.split('\n');
+
+const INPUT_02 = `abcde fghij
+abcde xyz ecdab
+a ab abc abd abf abj
+iiii oiii ooii oooi oooo
+oiii ioii iioi iiio`;
+const TEST_INPUT_02 = INPUT_02.split('\n');
 
 const EXPECTED_OUTPUT_01 = [true, false, true];
-const EXPECTED_OUTPUT_02 = [];
+const EXPECTED_OUTPUT_02 = [true, false, true, true, false];
 
 const INPUT = fs.readFileSync(__dirname + '/input.txt', 'utf8');
 
-function p01(input) {
-    return input.split('\n').filter(isValid).length;
-}
-
-function p02(input) {
-    return 0;
+function countValidPhrases(input, phraseCheck = isValid) {
+    return input.split('\n').filter(phraseCheck).length;
 }
 
 function isValid(passphrase) {
@@ -28,23 +30,31 @@ function isValid(passphrase) {
     return words.length === uniqueWords.size;
 }
 
-function test01() {
-    TEST_INPUT_01.forEach((input, index) => {
-        const answer = isValid(input);
-        assert.equal(answer, EXPECTED_OUTPUT_01[index]);
+function isValid02(passphrase) {
+    return false;
+}
+
+function test(testInput, expectedTestOutput, input, output, phraseCheck) {
+    testInput.forEach((input, index) => {
+        const answer = phraseCheck(input);
+        assert.equal(answer, expectedTestOutput[index]);
     });
-    const numValid = p01(INPUT_01);
-    assert.equal(numValid, 2);
+    const numValid = countValidPhrases(input, phraseCheck);
+    assert.equal(numValid, output);
 }
 
 function test02(input, output) {
-    const result = p02(input);
-    assert.equal(result, output);
+    TEST_INPUT_02.forEach((input, index) => {
+        const answer = isValid02(input);
+        assert.equal(answer, EXPECTED_OUTPUT_02[index]);
+    });
+    const numValid = countValidPhrases(INPUT_02, isValid02);
+    assert.equal(numValid, 3);
 }
 
-test01();
-test02(INPUT_02, EXPECTED_OUTPUT_02);
+test(TEST_INPUT_01, EXPECTED_OUTPUT_01, INPUT_01, 2, isValid);
+//test(TEST_INPUT_02, EXPECTED_OUTPUT_02, INPUT_02, 3, isValid02);
 
-const result = p01(INPUT);
-const result2 = p02(INPUT);
+const result = countValidPhrases(INPUT);
+const result2 = countValidPhrases(INPUT, isValid02);
 console.log(result, result2);
