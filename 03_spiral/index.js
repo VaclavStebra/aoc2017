@@ -5,10 +5,7 @@ const assert = require('assert');
 
 const INPUT_01 = [1, 12, 23, 1024];
 
-const INPUT_02 = [];
-
 const EXPECTED_OUTPUT_01 = [0, 3, 2, 31];
-const EXPECTED_OUTPUT_02 = [];
 
 const INPUT = + fs.readFileSync(__dirname + '/input.txt', 'utf8');
 
@@ -79,9 +76,6 @@ function testManhatanDistance() {
     assert.equal(manhattanDistance({x: -1, y: 1}, {x: 2, y: 2}), 4);
 }
 
-function p02(input) {
-    return 0;
-}
 
 function test01() {
     testManhatanDistance();
@@ -91,13 +85,176 @@ function test01() {
     });
 }
 
-function test02(input, output) {
-    const result = p02(input);
-    assert.equal(result, output);
+test01();
+
+// crystal ball told me this number
+const matrixSize = 11;
+
+function p02(input) {
+    let matrix = prepareMatrix();
+    let number = 1;
+
+    const centerX = (matrixSize - 1) / 2;
+    const centerY = centerX;
+
+    let width = 1;
+    let x = centerX;
+    let y = centerY;
+
+    while (number <= input) {
+        matrix[y][x] = number;
+        // next coords
+        const nextCoords = getNextCoords(x, y, width, centerX, centerY);  
+        x = nextCoords.x;
+        y = nextCoords.y;
+        
+        number = sumNeighbors(matrix, x, y);        
+        if (width === 1) {
+            width += 2;
+            continue;
+        }
+
+        // bottom right corner of square
+        if (isBottomRightCorner(nextCoords.x, nextCoords.y, centerX, centerY, (width - 1) / 2)) {
+            width += 2;
+        }   
+   
+    }
+    return number;
 }
 
-test01();
-test02(INPUT_02, EXPECTED_OUTPUT_02);
+function prepareMatrix() {
+    let matrix = new Array(matrixSize);
+    for (let i = 0; i < matrixSize; i++) {
+        matrix[i] = new Array(matrixSize);
+        for (let j = 0; j < matrixSize; j++) {
+            matrix[i][j] = 0;
+        }
+    }
+    return matrix;
+}
+
+function getNextCoords(x, y, width, centerX, centerY) {
+    const radius = (width - 1) / 2;
+
+    if (width === 1) {
+        return {
+            x: x + 1,
+            y
+        }
+    }
+
+    // top right corner
+    if (isTopRightCorner(x, y, centerX, centerY, radius)) {
+        return {
+            x: x - 1,
+            y
+        };
+    }
+
+    // top left corner
+    if (isTopLeftCorner(x, y, centerX, centerY, radius)) {
+        return {
+            x,
+            y: y + 1
+        };
+    }
+
+    // bottom left corner or bottom right corner
+    if (isBottomLeftCorner(x, y, centerX, centerY, radius) || isBottomRightCorner(x, y, centerX, centerY, radius)) {
+        return {
+            x: x + 1,
+            y
+        };
+    }
+
+    // right column
+    if (isRightColumn(x, centerX, radius)) {
+        return {
+            x,
+            y: y - 1
+        }
+    }
+
+    // top row
+    if (isTopRow(y, centerY, radius)) {
+        return {
+            x: x - 1,
+            y
+        }
+    }
+
+    // left column
+    if (isLeftColumn(x, centerX, radius)) {
+        return {
+            x,
+            y: y + 1
+        }
+    }
+
+    // bottom row
+    if (isBottomRow(y, centerY, radius)) {
+        return {
+            x: x + 1,
+            y
+        }
+    }
+
+    // this is weird but for some reason needed
+    return {
+        x: x + 1,
+        y
+    };
+}
+
+function isTopRightCorner(x, y, centerX, centerY, radius) {
+    return x === centerX + radius && y === centerY - radius;
+}
+
+function isTopLeftCorner(x, y, centerX, centerY, radius) {
+    return x === centerX - radius && y === centerY - radius;
+}
+
+function isBottomLeftCorner(x, y, centerX, centerY, radius) {
+    return x === centerX - radius && y === centerY + radius;
+}
+
+function isBottomRightCorner(x, y, centerX, centerY, radius) {
+    return x === centerX + radius && y === centerY + radius;
+}
+
+function isRightColumn(x, centerX, radius) {
+    return x === centerX + radius;
+}
+
+function isTopRow(y, centerY, radius) {
+    return y === centerY - radius;
+}
+
+function isLeftColumn(x, centerX, radius) {
+    return x === centerX - radius;
+}
+
+function isBottomRow(y, centerY, radius) {
+    return y === centerY + radius;
+}
+
+
+function sumNeighbors(matrix, x, y) {
+    let sum = 0;
+    sum += matrix[y-1][x-1];
+    sum += matrix[y][x-1];
+    sum += matrix[y+1][x-1];
+
+    
+    sum += matrix[y-1][x];
+    sum += matrix[y+1][x];
+    
+    sum += matrix[y-1][x+1];
+    sum += matrix[y][x+1];
+    sum += matrix[y+1][x+1];
+    return sum;
+}
 
 // 371
 const result = p01(INPUT);
